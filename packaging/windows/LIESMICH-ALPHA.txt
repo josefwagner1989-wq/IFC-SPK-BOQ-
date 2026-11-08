@@ -1,0 +1,43 @@
+IFC Sprinkler Viewer – ALPHA 0.1.0
+Created by Josef Wagner
+====================================
+
+*** ALPHA-VERSION (Vorabversion zum Testen) ***
+Funktionen können sich noch ändern. Die Mengen bitte stichprobenartig
+gegen das Modell prüfen, bevor sie in ein Angebot übernommen werden.
+Rückmeldungen und Fehler bitte an Josef Wagner.
+
+Was die App kann
+----------------
+- IFC-Modelle öffnen: IFC2x3, IFC4, IFC4x3 sowie gepackte .ifczip
+  (auch sehr große Dateien; Doppelklick, Drag & Drop oder "Datei auswählen")
+- Filtern nach Systemen, Worksets/Bereichen, Geschossen und Bauteilarten
+- Vereinfachte 3D-Ansicht (Rohre farbig nach Nennweite, Sprinkler als Punkte),
+  Klick auf ein Bauteil zeigt alle Eigenschaften
+- Anlagen getrennt: Sprinkler, Hydranten, Trockensteigleitungen
+- Mengenauszug je Anlage: Rohre je DN und Material, Dämmung, Formstücke,
+  Armaturen & Zubehör, Hinweise auf Lücken im Modell
+- Export nach Excel (je Anlage oder gesamt)
+- Visualisierung: Detailstufe Leicht (Raster) / Hoch (Solid), Schnitt,
+  Messen, Referenz-IFCs (z. B. Architektur) nur zur Ansicht
+- Render-Schatten (Test – nicht empfohlen)
+- Hell- und Dunkelmodus
+- Alle Daten bleiben auf diesem Rechner – es wird nichts hochgeladen.
+
+Bekannte Einschränkungen der Alpha
+----------------------------------
+- Revit-Dateien (.rvt) können noch nicht direkt gelesen werden.
+  Bitte in Revit als IFC exportieren (Datei > Exportieren > IFC).
+- Sehr große Dateien (> 1,5 GB) werden speicherschonend in mehreren
+  Durchläufen geladen; das Laden der Geometrie kann dann einige Minuten dauern.
+- Die Rohrlänge wird – wenn im Modell nicht hinterlegt – aus der Geometrie
+  berechnet (Hauptachse des Rohrkörpers).
+- Programm ist noch nicht digital signiert: Windows SmartScreen kann beim
+  ersten Start warnen ("Weitere Informationen" > "Trotzdem ausführen").
+
+Voraussetzungen
+---------------
+- Windows 10 oder 11 (64 Bit) mit Microsoft Edge WebView2-Laufzeit
+  (auf Windows 11 und aktuellen Windows-10-Rechnern bereits vorhanden;
+  sonst kostenlos bei Microsoft: "WebView2 Runtime Evergreen").
+- Installation ohne Administratorrechte (pro Benutzer).

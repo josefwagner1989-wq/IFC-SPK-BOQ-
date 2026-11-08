@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = ["crates/ifc-core", "src-tauri"]
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 4
+strip = false
+debug = 1

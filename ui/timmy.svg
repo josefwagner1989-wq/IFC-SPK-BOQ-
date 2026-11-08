@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 160" role="img" aria-label="Wal Timmy (Platzhalter)">
+  <!-- Provisório para a baleia Timmy – será substituído pela arte original -->
+  <g fill="#38bdf8">
+    <path d="M100 6c4 10 2 18-4 24 8-4 16-3 22 2-7-1-13 1-17 6l-2-3c-4-5-10-7-17-6 6-5 14-6 22-2-6-6-8-14-4-21z" opacity=".85"/>
+  </g>
+  <path d="M30 92c0-30 30-50 66-50 40 0 70 22 70 52 0 12-4 20-10 26 10 0 20-6 26-16 4 14-4 30-22 34-8 2-16 0-22-4-12 6-28 8-44 8-38 0-64-20-64-50z" fill="#1e88e5"/>
+  <path d="M40 104c10 22 34 32 60 32 22 0 40-6 50-16-6 18-28 28-54 28-30 0-52-16-56-44z" fill="#bfe3ff"/>
+  <circle cx="74" cy="84" r="9" fill="#fff"/>
+  <circle cx="76" cy="85" r="5" fill="#0b2545"/>
+  <circle cx="78" cy="83" r="1.6" fill="#fff"/>
+  <path d="M60 104c10 8 24 8 34 0" stroke="#0b2545" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <circle cx="56" cy="98" r="5" fill="#ff8fa3" opacity=".7"/>
+  <path d="M98 112c8-2 16 4 18 12-8 2-16-2-18-12z" fill="#1565c0"/>
+</svg>

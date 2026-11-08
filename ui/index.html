@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IFC Sprinkler Viewer – Alpha 0.1</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo" data-timmy="idle"></div><span>IFC Sprinkler Viewer</span><span class="alpha" title="Alpha-Version – Ergebnisse bitte stichprobenartig prüfen">ALPHA</span></div>
+  <div class="filebox" id="fileInfo" hidden></div>
+  <div class="actions">
+    <button class="ghost" id="btnNew" hidden>Neue Datei</button>
+    <button class="ghost" id="btnFilter" hidden>Filter ändern</button>
+    <button class="primary" id="btnExportTop" hidden title="Mengenauszug der gewählten Anlage nach Excel exportieren">⬇ Export</button>
+    <button class="themeToggle" id="themeToggle" title="Hell / Dunkel umschalten" aria-label="Hell / Dunkel umschalten">
+      <span class="sun">☀</span><span class="moon">☾</span>
+    </button>
+  </div>
+</header>
+
+<!-- 1  Início -->
+<section id="viewStart" class="view active">
+  <div class="startWrap">
+    <div class="dropzone" id="dropzone">
+      <div class="timmyBig" id="timmyStart" data-timmy="wave"></div>
+      <h1>IFC-Datei hierher ziehen</h1>
+      <p>oder</p>
+      <button class="primary" id="btnOpen">Datei auswählen</button>
+      <p class="hint">IFC2x3 · IFC4 · IFC4x3 – auch sehr große Modelle (mehrere GB)</p>
+    </div>
+    <div class="recent card">
+      <h2>Zuletzt geöffnet</h2>
+      <ul id="recentList"><li class="muted">Noch keine Dateien</li></ul>
+    </div>
+    <div class="alphaNote"><b>Alpha-Version 0.1</b> – Vorabversion zum Testen. Funktionen können sich noch ändern; Mengen bitte stichprobenartig gegen das Modell prüfen. Rückmeldungen bitte an Josef Wagner.</div>
+    <p class="privacy">🔒 Ihre Daten bleiben auf diesem Rechner – es wird nichts hochgeladen.</p>
+  </div>
+</section>
+
+<!-- 2  Carregar e filtrar -->
+<section id="viewFilter" class="view">
+  <div class="filterWrap">
+    <div class="card scanCard" id="scanCard">
+      <div class="timmyMid" id="timmyScan" data-timmy="swim"></div>
+      <div class="scanInfo">
+        <h2 id="scanTitle">Datei wird gescannt …</h2>
+        <div class="progress"><div class="bar" id="progBar"></div></div>
+        <div class="scanMeta"><span id="progText">0 %</span><button class="ghost small" id="btnCancel">Abbrechen</button></div>
+        <div class="stats" id="scanStats"></div>
+      </div>
+    </div>
+    <div class="filterGrid" id="filterGrid" hidden>
+      <div class="card fcol"><div class="fhead"><h3>Systeme</h3><span class="links"><a data-all="systems">alle</a> · <a data-none="systems">keine</a></span></div><input class="search" data-search="systems" placeholder="Suchen …"><div class="flist" id="f_systems"></div></div>
+      <div class="card fcol"><div class="fhead"><h3>Worksets / Bereiche</h3><span class="links"><a data-all="worksets">alle</a> · <a data-none="worksets">keine</a></span></div><input class="search" data-search="worksets" placeholder="Suchen …"><div class="flist" id="f_worksets"></div></div>
+      <div class="card fcol"><div class="fhead"><h3>Geschosse</h3><span class="links"><a data-all="storeys">alle</a> · <a data-none="storeys">keine</a></span></div><div class="flist" id="f_storeys"></div></div>
+      <div class="card fcol"><div class="fhead"><h3>Bauteilarten</h3></div><div class="flist" id="f_categories"></div></div>
+    </div>
+    <div class="filterFoot" id="filterFoot" hidden>
+      <span id="selCount" class="muted"></span>
+      <button class="primary big" id="btnLoad">Nur Auswahl laden</button>
+    </div>
+  </div>
+</section>
+
+<!-- 3+4  Visualização e levantamento de quantitativos -->
+<section id="viewMain" class="view">
+  <nav class="tabs" id="mainTabs">
+    <button class="tab active" data-tab="tab3d">3D-Ansicht</button>
+    <button class="tab" data-tab="tabQto">Mengenauszug</button>
+  </nav>
+  <div class="tabpane active" id="tab3d">
+    <aside class="side card">
+      <h3>Anzeigen</h3>
+      <label class="chk"><input type="checkbox" id="showPipes" checked> Rohre</label>
+      <label class="chk"><input type="checkbox" id="showFittings" checked> Formstücke</label>
+      <label class="chk"><input type="checkbox" id="showAcc" checked> Armaturen & Zubehör</label>
+      <h3 id="legendTitle">Nennweiten</h3>
+      <div id="legend" class="legend"></div>
+      <div class="legend fixed" id="legendFixed">
+        <div><i class="dot" style="background:#e53935"></i>Sprinkler</div>
+        <div><i class="dot" style="background:#facc15"></i>Armaturen</div>
+        <div><i class="dot" style="background:#94a3b8"></i>Formstücke</div>
+      </div>
+      <button class="ghost small" id="btnFit">Ansicht einpassen</button>
+      <h3>Referenzmodelle</h3>
+      <div id="refList" class="refList"><span class="muted small">Keine – über „＋ Referenz-IFC“ laden (nur Ansicht, kein Mengenauszug)</span></div>
+      <label class="chk small"><input type="checkbox" id="refTransp" checked> Referenzen transparent</label>
+      <p class="hint">Linke Maustaste: drehen · rechte: verschieben · Rad: zoomen · Klick: Bauteil</p>
+    </aside>
+    <div class="viewport" id="viewport"><canvas id="canvas"></canvas>
+      <div class="vptools">
+        <button class="tool" id="tSection" title="Schnittebene">✂ Schnitt</button>
+        <button class="tool" id="tMeasure" title="Abstand zwischen zwei Punkten messen">📏 Messen</button>
+        <button class="tool" id="tRef" title="Weitere IFC (z. B. Architektur) nur zur Ansicht laden – fließt nicht in den Mengenauszug ein">＋ Referenz-IFC</button>
+      </div>
+      <div class="vpPanel card" id="sectionPanel" hidden>
+        <div class="seg" id="secAxis"><button data-ax="z" class="active">Grundriss (Höhe)</button><button data-ax="x">Längs (X)</button><button data-ax="y">Quer (Y)</button></div>
+        <input type="range" id="secPos" min="0" max="1000" value="600">
+        <div class="prow"><span id="secVal" class="muted"></span><span class="sp"></span><button class="ghost small" id="secFlip">⇅ Seite</button><button class="ghost small" id="secOff">Aus</button></div>
+      </div>
+      <div class="vpPanel card" id="measurePanel" hidden>
+        <div class="prow"><b>Messen</b><span class="sp"></span><button class="ghost small" id="measClear">Löschen</button><button class="ghost small" id="measOff">Fertig</button></div>
+        <div class="muted small" id="measHint">Ersten Punkt anklicken …</div>
+        <div id="measList"></div>
+      </div>
+      <div class="detailBar">
+        <div class="seg" id="detailSeg"><button data-d="light" class="active" title="Linien und Punkte – schnell, auch bei sehr großen Modellen">▦ Leicht (Raster)</button><button data-d="high" title="Solide Körper, feste Farben je Anlage und Bauteilart">◼ Hoch (Solid)</button></div>
+        <label class="chk small renderChk"><input type="checkbox" id="renderShadows"> Render: Schatten <span class="testTag">Test – nicht empfohlen</span></label>
+      </div>
+      <div class="vpinfo" id="vpInfo"></div>
+      <div id="labels"></div>
+      <div class="vpBusy" id="vpBusy" hidden><div class="timmyMini" id="timmyBusy" data-timmy="swim"></div><span id="vpBusyText">Lädt …</span></div>
+    </div>
+    <aside class="props card" id="props">
+      <h3>Eigenschaften</h3>
+      <p class="muted">Bauteil anklicken</p>
+    </aside>
+  </div>
+  <div class="tabpane" id="tabQto">
+    <div class="anlagenBar"><span class="muted">Anlage:</span><div class="anlagen" id="anlagen"></div></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="qtoBar">
+      <nav class="subtabs" id="qtoTabs">
+        <button class="sub active" data-q="pipes">Rohre</button>
+        <button class="sub" data-q="insulation">Dämmung</button>
+        <button class="sub" data-q="fittings">Formstücke</button>
+        <button class="sub" data-q="accessories">Armaturen & Zubehör</button>
+        <button class="sub" data-q="notes">Hinweise</button>
+      </nav>
+      <button class="primary" id="btnExport">Nach Excel exportieren</button>
+    </div>
+    <div class="card tableCard"><table id="qtoTable"></table></div>
+    <p class="hint">Zeile anklicken: Bauteile in der 3D-Ansicht markieren.</p>
+  </div>
+</section>
+
+<footer class="footer"><span>Created by <b>Josef Wagner</b></span><span>IFC Sprinkler Viewer · <span class="alphaTxt">Alpha 0.1.0</span></span></footer>
+<div class="watermark" aria-hidden="true"></div>
+<div class="toast" id="toast" hidden></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

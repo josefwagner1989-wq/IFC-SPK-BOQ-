@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MSI do IFC Sprinkler Viewer (Alpha) – instalação por usuário, sem direitos de administrador.
+     Gerar (Linux): wixl -a x64 -D SourceDir=<pasta> -o IFC-Sprinkler-Viewer_0.1.0-alpha_x64.msi IFCSprinklerViewer.wxs -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="IFC Sprinkler Viewer (Alpha)" Language="1031" Codepage="1252"
+           Version="0.1.0" Manufacturer="Josef Wagner"
+           UpgradeCode="a69741c3-0198-412e-878c-003e67d1ef81">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perUser" Platform="x64"
+             Description="IFC Sprinkler Viewer – ALPHA 0.1.0 (Vorabversion) – Created by Josef Wagner"
+             Comments="IFC-Viewer und Mengenauszug für Sprinkleranlagen. Alpha-Version: Mengen bitte stichprobenartig prüfen."
+             Manufacturer="Josef Wagner" />
+    <Media Id="1" Cabinet="app.cab" EmbedCab="yes" />
+    <MajorUpgrade DowngradeErrorMessage="Eine neuere Version von IFC Sprinkler Viewer ist bereits installiert." />
+
+    <Icon Id="AppIcon" SourceFile="$(var.SourceDir)/icon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <Property Id="ARPCONTACT" Value="Josef Wagner" />
+    <Property Id="ARPCOMMENTS" Value="ALPHA 0.1.0 – Vorabversion zum Testen. Created by Josef Wagner." />
+    <Property Id="ALLUSERS" Value="2" />
+    <Property Id="MSIINSTALLPERUSER" Value="1" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="LocalAppDataFolder">
+        <Directory Id="ProgramsDir" Name="Programs">
+          <Directory Id="INSTALLDIR" Name="IFC Sprinkler Viewer">
+            <Component Id="MainExe" Guid="5b0f7a52-3d1c-4c8e-9a51-1f0c6a7e2b11" Win64="yes">
+              <RegistryValue Root="HKCU" Key="Software\Josef Wagner\IFC Sprinkler Viewer" Name="exe" Type="string" Value="[INSTALLDIR]IFCSprinklerViewer.exe" KeyPath="yes" />
+              <File Id="AppExe" Name="IFCSprinklerViewer.exe" Source="$(var.SourceDir)/IFCSprinklerViewer.exe" />
+              <RemoveFolder Id="RemoveInstallDir" On="uninstall" />
+            </Component>
+            <Component Id="WebView2Loader" Guid="7c2d1e90-4b6a-4f0e-8d3b-2a9e5c1f7d22" Win64="yes">
+              <RegistryValue Root="HKCU" Key="Software\Josef Wagner\IFC Sprinkler Viewer" Name="wv2" Type="string" Value="1" KeyPath="yes" />
+              <File Id="Wv2Dll" Name="WebView2Loader.dll" Source="$(var.SourceDir)/WebView2Loader.dll" />
+            </Component>
+            <Component Id="Readme" Guid="9e4f2a13-6c8b-4d1f-a2e7-3b5c8d0e1f33" Win64="yes">
+              <RegistryValue Root="HKCU" Key="Software\Josef Wagner\IFC Sprinkler Viewer" Name="readme" Type="string" Value="1" KeyPath="yes" />
+              <File Id="ReadmeTxt" Name="LIESMICH-ALPHA.txt" Source="$(var.SourceDir)/LIESMICH-ALPHA.txt" />
+            </Component>
+            <!-- "Abrir com" para .ifc / .ifczip (não altera o programa padrão) -->
+            <Component Id="FileAssoc" Guid="b1a3c5e7-2d4f-4a6b-8c9d-0e1f2a3b4c55" Win64="yes">
+              <RegistryValue Root="HKCU" Key="Software\Classes\JosefWagner.IfcSprinklerViewer.ifc" Type="string" Value="IFC-Modell" KeyPath="yes" />
+              <RegistryValue Root="HKCU" Key="Software\Classes\JosefWagner.IfcSprinklerViewer.ifc\DefaultIcon" Type="string" Value="[INSTALLDIR]IFCSprinklerViewer.exe,0" />
+              <RegistryValue Root="HKCU" Key="Software\Classes\JosefWagner.IfcSprinklerViewer.ifc\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]IFCSprinklerViewer.exe&quot; &quot;%1&quot;" />
+              <RegistryValue Root="HKCU" Key="Software\Classes\.ifc\OpenWithProgids" Name="JosefWagner.IfcSprinklerViewer.ifc" Type="string" Value="" />
+              <RegistryValue Root="HKCU" Key="Software\Classes\.ifczip\OpenWithProgids" Name="JosefWagner.IfcSprinklerViewer.ifc" Type="string" Value="" />
+              <RegistryValue Root="HKCU" Key="Software\Classes\Applications\IFCSprinklerViewer.exe\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]IFCSprinklerViewer.exe&quot; &quot;%1&quot;" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="AppMenuDir" Name="IFC Sprinkler Viewer">
+          <Component Id="StartMenu" Guid="c3d5e7f9-1a2b-4c3d-9e4f-5a6b7c8d9e66" Win64="yes">
+            <Shortcut Id="StartMenuShortcut" Name="IFC Sprinkler Viewer (Alpha)" Description="IFC-Viewer und Mengenauszug für Sprinkleranlagen – Created by Josef Wagner"
+                      Target="[INSTALLDIR]IFCSprinklerViewer.exe" WorkingDirectory="INSTALLDIR" Icon="AppIcon" />
+            <RemoveFolder Id="RemoveAppMenuDir" On="uninstall" />
+            <RegistryValue Root="HKCU" Key="Software\Josef Wagner\IFC Sprinkler Viewer" Name="startmenu" Type="integer" Value="1" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+      <Directory Id="DesktopFolder">
+        <Component Id="DesktopShortcut" Guid="d4e6f8a0-2b3c-4d5e-8f6a-7b8c9d0e1f77" Win64="yes">
+          <Shortcut Id="DesktopLnk" Name="IFC Sprinkler Viewer (Alpha)" Target="[INSTALLDIR]IFCSprinklerViewer.exe" WorkingDirectory="INSTALLDIR" Icon="AppIcon" />
+          <RegistryValue Root="HKCU" Key="Software\Josef Wagner\IFC Sprinkler Viewer" Name="desktop" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </Directory>
+
+    <Feature Id="Main" Title="IFC Sprinkler Viewer" Level="1">
+      <ComponentRef Id="MainExe" />
+      <ComponentRef Id="WebView2Loader" />
+      <ComponentRef Id="Readme" />
+      <ComponentRef Id="FileAssoc" />
+      <ComponentRef Id="StartMenu" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+  </Product>
+</Wix>
