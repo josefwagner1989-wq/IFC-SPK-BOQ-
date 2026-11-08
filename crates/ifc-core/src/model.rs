@@ -31,7 +31,7 @@ const PROXY: &[&str] = &["IFCBUILDINGELEMENTPROXY", "IFCFLOWSEGMENT"];
 
 const SYSTEM_TYPES: &[&str] = &["IFCSYSTEM", "IFCDISTRIBUTIONSYSTEM", "IFCDISTRIBUTIONCIRCUIT", "IFCBUILDINGSYSTEM"];
 
-pub const DEFAULT_SYSTEM_RX: &str = r"(?i)sprinkler|\bspk|\bspr|feuer|lösch|loesch|fireprotection|fire|sprink|hydrant|steigleitung|\btsl\b|dry.?riser|standpipe";
+pub const DEFAULT_SYSTEM_RX: &str = r"(?i)sprinkler|\bspk|\bspr|feuer|lösch|loesch|fireprotection|fire|sprink|hydrant|steigleitung|\btsl|dry.?riser|standpipe";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, PartialOrd, Ord)]
 pub enum Cat {
@@ -297,8 +297,8 @@ impl Model {
                     e.len_src = if eg.from_mesh { "Geometrie (Flächenmodell)".into() } else { "Geometrie (Achse)".into() };
                 }
             }
-            // DN a partir do diâmetro externo da geometria
-            if e.dn.is_none() {
+            // DN a partir do diâmetro externo da geometria (só tubos e conexões, não equipamentos)
+            if e.dn.is_none() && e.cat != Cat::Zubehoer {
                 if let Some(od) = eg.outer_diameter_mm {
                     let (dn, lbl) = dn_from_od(od);
                     e.dn = Some(dn);
@@ -1023,7 +1023,7 @@ pub const ANLAGE_NONE: &str = "Nicht zugeordnet";
 fn classify_anlage(systems: &[String], worksets: &[String], kind: &str, text: &str) -> String {
     static R: OnceLock<[Regex; 3]> = OnceLock::new();
     let [tsl, hyd, spk] = R.get_or_init(|| [
-        Regex::new(r"(?i)trocken.?steig|\btsl\b|dry.?riser|trockenleitung|steigleitung.?trocken").unwrap(),
+        Regex::new(r"(?i)trocken.?steig|\btsl(\b|_)|dry.?riser|trockenleitung|steigleitung.?trocken").unwrap(),
         Regex::new(r"(?i)hydrant|nass.?steig|steigleitung.?nass|\bwh\b|\bwhyd|löschwasser|loeschwasser|standpipe|hose|feuerlösch.?leitung").unwrap(),
         Regex::new(r"(?i)sprinkler|\bspk|\bspr\b|\bspr_|sprink|esfr").unwrap(),
     ]);

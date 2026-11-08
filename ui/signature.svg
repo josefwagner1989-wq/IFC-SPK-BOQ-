@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 220">
   <!-- Provisório: será substituído pela assinatura real de Josef Wagner (mesmo nome de arquivo, ou signature.png) -->
-  <text x="320" y="130" text-anchor="middle" font-family="'Segoe Script','Brush Script MT','URW Chancery L','Z003',cursive" font-size="104" font-style="italic" fill="#0b2545">Josef Wagner</text>
+  <text x="320" y="130" text-anchor="middle" font-family="'Segoe Script','Brush Script MT','URW Chancery L','Z003',cursive" font-size="96" font-style="italic" fill="#0b2545" textLength="540" lengthAdjust="spacingAndGlyphs">Josef Wagner</text>
   <path d="M90 160 C230 150 400 176 560 150" stroke="#0b2545" stroke-width="5" fill="none" stroke-linecap="round"/>
 </svg>
